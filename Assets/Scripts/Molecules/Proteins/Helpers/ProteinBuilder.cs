@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Unity.VisualScripting;
-using UnityEditor.Build.Reporting;
 using UnityEngine;
 using Sequence = MolecularSurfaces.Molecules.Proteins.Sequence;
 

@@ -20,15 +20,17 @@ Assets/
     DataSources/   RCSB download, local PDB cache, CSV reader
     Components/    MonoBehaviour instances that render the above
     Presentation/  slide and on-screen text helpers
-    Demos/         ProteinLoadingDemo, SDFPerformanceDemo
+    Demos/         ProteinViewer (ID entry + loading), OrbitCamera
   Scenes/
-    SDF Performance.unity
+    Protein Viewer.unity
 ```
 
-## Running
+## Running the viewer
 
 1. Open the project in Unity 2022.3.23f1. If Unity asks, import the TextMeshPro Essential Resources.
-2. Open `Assets/Scenes/SDF Performance.unity`, select the demo object, and turn on **Build**. With **Use Cache** turned off, the structure (`1UBQ` by default) is downloaded from RCSB.
-3. To use local files, put `.pdb` files in `Assets/Data/Cache/` and turn on **Use Cache**.
+2. Open `Assets/Scenes/Protein Viewer.unity` and press Play. Ubiquitin (`1UBQ`) loads first.
+3. Type any 4-character PDB ID (for example `1CRN`, `4HHB` or `2PTC`) into the panel and press **Enter** or **Load**. The structure is downloaded from RCSB on a background thread, then meshed and framed in view.
 
-`ProteinLoadingDemo` works the same way and can be added to any GameObject.
+Controls: left-drag to rotate, right- or middle-drag to pan, scroll to zoom, and **F** to reframe. The model slowly auto-rotates until you drag it.
+
+An internet connection is required. Very large entries that RCSB only publishes as mmCIF can't be loaded.
