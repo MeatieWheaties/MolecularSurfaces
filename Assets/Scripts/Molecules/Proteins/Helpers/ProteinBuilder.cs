@@ -66,6 +66,8 @@ namespace MolecularSurfaces.Molecules
             _lineNumber = 0;
             string _line = "";
             var _fileLines = new List<string>();
+            // NMR entries contain many models of the same chains; only the first is used.
+            var _firstModelDone = false;
             while ((_line = _reader.ReadLine()) != null)
             {
                 _fileLines.Add(_line);
@@ -78,16 +80,17 @@ namespace MolecularSurfaces.Molecules
                 switch (_recordType)
                 {
                     case PdbRecordType.ATOM:
-                        ParseAtom(_line, _lineNumber, false, ref _Atoms);
+                        if (!_firstModelDone) ParseAtom(_line, _lineNumber, false, ref _Atoms);
                         break;
                     case PdbRecordType.HETATM:
-                        ParseAtom(_line, _lineNumber, true, ref _Atoms);
+                        if (!_firstModelDone) ParseAtom(_line, _lineNumber, true, ref _Atoms);
                         break;
                     case PdbRecordType.MODEL:
                         ParseModel(_line, _lineNumber);
                         break;
                     case PdbRecordType.ENDMDL:
                         ParseEndModel(_line, _lineNumber);
+                        _firstModelDone = true;
                         break;
                     case PdbRecordType.TER:
                         ParseTer(_line, _lineNumber);
@@ -126,7 +129,9 @@ namespace MolecularSurfaces.Molecules
             {
                 Chain = _Build.Select(s => s.Value.RenderSequence()).ToDictionary(x => x.ChainId),
                 Residues = _Build.SelectMany(s => s.Value.Residues).Select(s => s.Value.Render()).ToArray(),
-                Atoms = _Build.SelectMany(s => s.Value.Residues).SelectMany(s => s.Value.Atoms).Select(a => a.Render()).ToArray(),
+                // Residues reference atoms by file-order index, so the array must be in file
+                // order too (HETATM records often come after every chain's ATOM records).
+                Atoms = _Build.SelectMany(s => s.Value.Residues).SelectMany(s => s.Value.Atoms).OrderBy(a => a.Index).Select(a => a.Render()).ToArray(),
                 ResidueLookup = _lookup,
                 File = new ProteinFile(ProteinFileType.PDB, _fileLines.ToArray())
             };

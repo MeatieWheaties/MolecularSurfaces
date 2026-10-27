@@ -46,6 +46,17 @@ namespace MolecularSurfaces.Geometry
         public const float ISO_LEVEL = 0;
         public Mesh ToMesh(float scale = 1)
         {
+            Triangulate(scale, out var _vertices, out var _uvs, out var _indices);
+            return MeshGenerator.NewMesh(_vertices, _uvs, _indices);
+        }
+
+        /// <summary>
+        /// Runs marching cubes and returns raw buffers. Unlike <see cref="ToMesh"/> this
+        /// touches no Unity objects, so it is safe to call off the main thread
+        /// (call <see cref="MarchingCubes.InitCache"/> on the main thread first).
+        /// </summary>
+        public void Triangulate(float scale, out Vector3[] vertices, out Vector2[] uvs, out int[] indices)
+        {
             MarchingCubes.InitCache();
 
             var _scale = 1 / Mathf.Max(0.001f, scale);
@@ -224,7 +235,9 @@ namespace MolecularSurfaces.Geometry
                 }
             }));
 
-            return MeshGenerator.NewMesh(_triangleBuffer, _uvBuffer, _indexBuffer);
+            vertices = _triangleBuffer;
+            uvs = _uvBuffer;
+            indices = _indexBuffer;
         }
     }
 

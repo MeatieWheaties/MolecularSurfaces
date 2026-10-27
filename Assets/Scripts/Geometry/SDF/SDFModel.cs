@@ -52,7 +52,8 @@ namespace MolecularSurfaces.Geometry.SDF
                 var _isoSurface = new IsoSurface(chunk.Value.Min, chunkSize);
 
                 var _brushSet = _Space.Query(chunk.Value);
-                var _brushes = _brushSet.Select(g => _Stack[g]).ToArray();
+                // Order once per chunk rather than once per voxel.
+                var _brushes = _brushSet.Select(g => _Stack[g]).OrderBy(o => o.order).ToArray();
 
                 if(_brushes.Count() == 0)
                 {
@@ -64,7 +65,7 @@ namespace MolecularSurfaces.Geometry.SDF
                     var _value = 1f;
                     var _at = At(i, chunk.Value.Size.x, chunk.Value.Size.y) + chunk.Value.Min;
 
-                    foreach (var _brush in _brushes.OrderBy(o => o.order))
+                    foreach (var _brush in _brushes)
                     {
                         var _brushValue = _brush.Item3.IsoSurface(_at);
                         switch (_brush.Item2)
