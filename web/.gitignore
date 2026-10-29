@@ -1,0 +1,5 @@
+node_modules/
+dist/
+
+# The root .gitignore ignores *.pdb (Visual Studio debug symbols); these are protein structures.
+!test/fixtures/*.pdb
