@@ -4,6 +4,8 @@ const ROTATE_SPEED = 0.4; // degrees per pixel
 const ZOOM_SPEED = 0.0015; // per wheel pixel
 const SMOOTHING = 10; // higher is snappier
 const AUTO_ROTATE_SPEED = 8; // degrees per second
+// Extra distance when framing, so parts that stick out past the framed radius aren't cut off.
+const FRAME_MARGIN = 1.2;
 
 /**
  * Orbit camera: left-drag (or one finger) rotates, right/middle-drag (or two fingers)
@@ -70,7 +72,7 @@ export class OrbitCamera {
     const halfFovX = Math.atan(Math.tan(halfFov) * aspect);
     this.frameTarget.copy(center);
     this.frameRadius = radius;
-    this.frameDistance = radius / Math.sin(Math.min(halfFov, halfFovX));
+    this.frameDistance = (FRAME_MARGIN * radius) / Math.sin(Math.min(halfFov, halfFovX));
 
     this.goalTarget.copy(this.frameTarget);
     this.goalDistance = this.frameDistance;
